@@ -5,16 +5,33 @@ import pydicom.dataset
 
 
 cache_dir = Path.home() / '.medimage4tests ' / 'cache' / 'dicom'
+dicom_pkg_dir = Path(__file__).parent
 
 
-def generate_test_dicom(path: str, num_vols: int, constant_hdr: dict,
-                        collated_data: dict, varying_hdr: dict):
+def get_relpath(file_loc: str):
+    """Gets relative path location of module from base DICOM directory
+
+    Parameters
+    ----------
+    file_loc : str
+        File path to module were the
+
+    Returns
+    -------
+    Path
+        Relative path to module
+    """
+    return Path(file_loc).relative_to(dicom_pkg_dir)
+
+
+def generate_dicom(cache_path: Path, num_vols: int, constant_hdr: dict,
+                   collated_data: dict, varying_hdr: dict):
     """Generates a dummy DICOM dataset for a test fixture
 
     Parameters
     ----------
-    path : str
-        Path (name) for the generated Dicom object
+    cache_path : Path
+        Path to directory to save the DICOM files relative to the base cache dir
     num_vols : int
         Number of volumes in the set
     constant_hdr : dict[str, Any]
@@ -30,29 +47,30 @@ def generate_test_dicom(path: str, num_vols: int, constant_hdr: dict,
         Dicom dataset
     """
 
-    dicom_dir = cache_dir / path
-
-    if not dicom_dir.exists():  # Check for cached version
-        dicom_dir.mkdir(parents=True)
+    if not cache_path.exists():  # Check for cached version
+        cache_path.mkdir(parents=True)
 
         try:
             for i in range(num_vols):
                 i = str(i)
                 vol_json = copy(constant_hdr)
                 if varying_hdr is not None:
-                    vol_json.update({k: v[i] for k, v in varying_hdr.items() if i in v})
-                # Reconstitute large binary fields with dummy data filled with \3 bytes
-                vol_json.update({k: {'vr': v[i]['vr'],
-                                     'InlineBinary': "X" * v[i]['BinaryLength']}
-                                for k, v in collated_data.items() if i in v})
-
+                    vol_json.update(
+                        {k: v[i] for k, v in varying_hdr.items() if i in v})
+                # Reconstitute large binary fields with dummy data filled with
+                # \3 bytes
+                for key, val in collated_data.items():
+                    if i in val:
+                        vol_json[key] = {
+                            'vr': val[i]['vr'],
+                            'InlineBinary': "X" * val[i]['BinaryLength']}
                 ds = pydicom.dataset.Dataset.from_json(vol_json)
                 ds.is_implicit_VR = True
                 ds.is_little_endian = True
 
-                ds.save_as(dicom_dir / f"{i}.dcm")
+                ds.save_as(cache_path / f"{i}.dcm")
         except:
-            shutil.rmtree(dicom_dir)  # Remove directory from cache on error
+            shutil.rmtree(cache_path)  # Remove directory from cache on error
             raise
 
-    return dicom_dir
+    return cache_path

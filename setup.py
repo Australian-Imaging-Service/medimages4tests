@@ -1,5 +1,5 @@
 import versioneer
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 
 setup(
@@ -7,7 +7,7 @@ setup(
     version=versioneer.get_version(),
     author='Thomas G. Close',
     author_email='tom.g.close@gmail.com',
-    packages=find_packages(),
+    packages=find_namespace_packages(),
     url='https://github.com/australian-imaging-service/medimage4tests',
     license='CC0',
     description=('Generates dummy medical image data with realistic headers '

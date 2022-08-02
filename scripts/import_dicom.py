@@ -77,15 +77,12 @@ def generate_python_code(dpath: Path, image_type: str):
         collated_data=json.dumps(collated_data))
 
 
-FILE_TEMPLATE = """
-import pytest
-from arcana.test.fixtures.medimage.dicom.base import generate_test_dicom
+FILE_TEMPLATE = """from medimage4tests.dicom.base import generate_dicom, get_relpath
 
 
-@pytest.fixture(scope='session')
-def {image_type}_dicom_generator():
-    return generate_test_dicom('{image_type}', num_vols, constant_hdr,
-                               collated_data, varying_hdr)
+def sample_image():
+    return generate_dicom(get_relpath(__file__), num_vols, constant_hdr,
+                          collated_data, varying_hdr)
 
 
 num_vols = {num_vols}
@@ -100,8 +97,6 @@ varying_hdr = {varying_hdr}
 collated_data = {collated_data}
 
 
-if __name__ == '__main__':
-    print(generate_test_dicom('{fixture_name}',num_vols, constant_hdr, collated_data, varying_hdr))
 """
 
 ANONYMOUS_TAGS = {
