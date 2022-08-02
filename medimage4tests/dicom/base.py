@@ -8,7 +8,7 @@ cache_dir = Path.home() / '.medimage4tests ' / 'cache' / 'dicom'
 dicom_pkg_dir = Path(__file__).parent
 
 
-def get_relpath(file_loc: str):
+def default_dicom_dir(file_loc: str):
     """Gets relative path location of module from base DICOM directory
 
     Parameters
@@ -21,7 +21,7 @@ def get_relpath(file_loc: str):
     Path
         Relative path to module
     """
-    return Path(file_loc).relative_to(dicom_pkg_dir)
+    return cache_dir / Path(file_loc).relative_to(dicom_pkg_dir)
 
 
 def generate_dicom(cache_path: Path, num_vols: int, constant_hdr: dict,
@@ -47,30 +47,34 @@ def generate_dicom(cache_path: Path, num_vols: int, constant_hdr: dict,
         Dicom dataset
     """
 
-    if not cache_path.exists():  # Check for cached version
-        cache_path.mkdir(parents=True)
+    # Check for non-empty cache directory, and return it if present
+    if cache_path.exists() and len([p for p in cache_path.iterdir()
+                                    if not p.name.startswith('.')]):
+        return cache_path
 
-        try:
-            for i in range(num_vols):
-                i = str(i)
-                vol_json = copy(constant_hdr)
-                if varying_hdr is not None:
-                    vol_json.update(
-                        {k: v[i] for k, v in varying_hdr.items() if i in v})
-                # Reconstitute large binary fields with dummy data filled with
-                # \3 bytes
-                for key, val in collated_data.items():
-                    if i in val:
-                        vol_json[key] = {
-                            'vr': val[i]['vr'],
-                            'InlineBinary': "X" * val[i]['BinaryLength']}
-                ds = pydicom.dataset.Dataset.from_json(vol_json)
-                ds.is_implicit_VR = True
-                ds.is_little_endian = True
+    cache_path.mkdir(parents=True, exist_ok=True)
 
-                ds.save_as(cache_path / f"{i}.dcm")
-        except:
-            shutil.rmtree(cache_path)  # Remove directory from cache on error
-            raise
+    try:
+        for i in range(num_vols):
+            i = str(i)
+            vol_json = copy(constant_hdr)
+            if varying_hdr is not None:
+                vol_json.update(
+                    {k: v[i] for k, v in varying_hdr.items() if i in v})
+            # Reconstitute large binary fields with dummy data filled with
+            # \3 bytes
+            for key, val in collated_data.items():
+                if i in val:
+                    vol_json[key] = {
+                        'vr': val[i]['vr'],
+                        'InlineBinary': "X" * val[i]['BinaryLength']}
+            ds = pydicom.dataset.Dataset.from_json(vol_json)
+            ds.is_implicit_VR = True
+            ds.is_little_endian = True
 
-    return cache_path
+            ds.save_as(cache_path / f"{i}.dcm")
+    except:
+        shutil.rmtree(cache_path)  # Remove directory from cache on error
+        raise
+    else:
+        return cache_path

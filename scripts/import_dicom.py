@@ -77,11 +77,11 @@ def generate_python_code(dpath: Path, image_type: str):
         collated_data=json.dumps(collated_data))
 
 
-FILE_TEMPLATE = """from medimage4tests.dicom.base import generate_dicom, get_relpath
+FILE_TEMPLATE = """from medimage4tests.dicom.base import generate_dicom, default_dicom_dir
 
 
-def sample_image():
-    return generate_dicom(get_relpath(__file__), num_vols, constant_hdr,
+def sample_image(out_dir=default_dicom_dir(__file__)):
+    return generate_dicom(out_dir, num_vols, constant_hdr,
                           collated_data, varying_hdr)
 
 
