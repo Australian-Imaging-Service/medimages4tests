@@ -1,4 +1,4 @@
-from medimages4tests.dicom.base import generate_dicom, get_relpath
+from medimages4tests.dicom.base import generate_dicom, default_dicom_dir
 
 
 def sample_image(out_dir=default_dicom_dir(__file__)):
