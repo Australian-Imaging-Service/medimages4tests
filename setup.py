@@ -17,7 +17,9 @@ setup(
         'pydicom>=1.0.2'],
     extras_require={
         'test': [
-            'pytest>=5.4.3']},
+            'pytest>=5.4.3',
+            'pytest-env>=0.6.2',
+            'pytest-cov>=2.12.1']},
     include_package_data=True,
     cmdclass=versioneer.get_cmdclass(),
     classifiers=(
