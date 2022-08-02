@@ -3,12 +3,12 @@ from setuptools import setup, find_namespace_packages
 
 
 setup(
-    name='medimage4tests',
+    name='medimages4tests',
     version=versioneer.get_version(),
     author='Thomas G. Close',
     author_email='tom.g.close@gmail.com',
     packages=find_namespace_packages(),
-    url='https://github.com/australian-imaging-service/medimage4tests',
+    url='https://github.com/australian-imaging-service/medimages4tests',
     license='CC0',
     description=('Generates dummy medical image data with realistic headers '
                  'to be used in image handling tests'),

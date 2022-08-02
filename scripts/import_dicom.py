@@ -77,7 +77,7 @@ def generate_python_code(dpath: Path, image_type: str):
         collated_data=json.dumps(collated_data))
 
 
-FILE_TEMPLATE = """from medimage4tests.dicom.base import generate_dicom, default_dicom_dir
+FILE_TEMPLATE = """from medimages4tests.dicom.base import generate_dicom, default_dicom_dir
 
 
 def sample_image(out_dir=default_dicom_dir(__file__)):
