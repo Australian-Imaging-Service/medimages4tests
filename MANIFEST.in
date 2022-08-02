@@ -8,8 +8,8 @@ include LICENSE
 include AUTHORS
 
 # Include the Docker src
-include medimage4tests/docker-src/*
+include medimages4tests/docker-src/*
 
 # Include Versioneer files
 include versioneer.py
-include medimage4tests/_version.py
+include medimages4tests/_version.py
