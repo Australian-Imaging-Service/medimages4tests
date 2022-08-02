@@ -1,0 +1,3 @@
+[run]
+omit = */tests/*, medimages4tests/_version.py
+branch = true
