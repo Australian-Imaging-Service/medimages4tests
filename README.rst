@@ -22,9 +22,9 @@ Usage
 .. code-block:: python
 
     # Import medimage4tests generator functions
-    from medimage4tests.dicom.dwi import siemens_skyra_dwi_sample_image
+    from medimage4tests.dicom.mri.fmap.ge.discovery_mr888.dv26_0_r05_2008a import sample_image
 
     # Return generated images in pytest fixtures (or alternative test framework)
-    @pytest.fixture(scope='session')
-    def siemens_skyra_dwi_dicom():
-        return siemens_skyra_dwi_sample_image()
+    @pytest.fixture()
+    def ge_dicom_fmap():
+        return sample_image()
