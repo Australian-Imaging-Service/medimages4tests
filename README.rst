@@ -1,5 +1,6 @@
-Medimage4tests
-==============
+Medimages4tests
+===============
+
 .. image:: https://github.com/australian-imaging-service/medimages4tests/actions/workflows/test.yml/badge.svg
    :target: https://github.com/australian-imaging-service/medimages4tests/actions/workflows/test.yml
 .. image:: https://codecov.io/gh/australian-imaging-service/medimages4tests/branch/main/graph/badge.svg?token=UIS0OGPST7
