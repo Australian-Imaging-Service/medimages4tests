@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from importlib import import_module
 import pytest
@@ -13,3 +14,20 @@ def dicom_module(request):
     module_path = 'medimages4tests.dicom.' + '.'.join(request.param.split('__'))
     return import_module(module_path)
     
+
+
+# For debugging in IDE's don't catch raised exceptions and let the IDE
+# break at it
+if os.getenv('_PYTEST_RAISE', "0") != "0":
+
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_exception_interact(call):
+        raise call.excinfo.value
+
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_internalerror(excinfo):
+        raise excinfo.value
+
+    catch_cli_exceptions = False
+else:
+    catch_cli_exceptions = True
