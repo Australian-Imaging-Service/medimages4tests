@@ -11,7 +11,7 @@ def sample_image(
     vox_sizes=(1.0, 1.0, 1.0),
     qform=(1, 2, 3, 1),
     compressed=False,
-):
+) -> Path:
     """Create a random Nifti file to satisfy BIDS parsers"""
     if data is None:
         data = np.random.randint(0, 1, size=[10, 10, 10])
