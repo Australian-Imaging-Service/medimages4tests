@@ -2,9 +2,9 @@ from pathlib import Path
 import shutil
 from copy import copy
 import pydicom.dataset
+from .. import base_cache_dir
 
-
-cache_dir = Path.home() / ".medimages4tests" / "cache" / "dicom"
+cache_dir = base_cache_dir / "dicom"
 dicom_pkg_dir = Path(__file__).parent
 
 

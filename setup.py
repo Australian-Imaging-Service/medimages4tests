@@ -14,7 +14,8 @@ setup(
                  'to be used in image handling tests'),
     long_description=open('README.rst').read(),
     install_requires=[
-        'pydicom>=1.0.2'],
+        'pydicom>=1.0.2',
+        "nibabel>=4.0.1"],
     extras_require={
         'test': [
             'pytest>=5.4.3',
