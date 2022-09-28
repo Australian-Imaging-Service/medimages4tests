@@ -11,7 +11,7 @@ def test_nifti(work_dir):
 
     nifti = nb.load(nifti_fpath)
 
-    assert np.array_equal(nifti.header()["dim"][:4], [3, 10, 10, 10])
+    assert np.array_equal(nifti.header["dim"][:4], [3, 10, 10, 10])
 
 
 def test_nifti_compressed(work_dir):
@@ -24,4 +24,4 @@ def test_nifti_compressed(work_dir):
             shutil.copyfileobj(f_in, f_out)
     nifti = nb.load(uncompressed_fpath)
 
-    assert np.array_equal(nifti.header()["dim"][:4], [3, 10, 10, 10])
+    assert np.array_equal(nifti.header["dim"][:4], [3, 10, 10, 10])
