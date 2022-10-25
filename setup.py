@@ -34,5 +34,5 @@ setup(
          "Topic :: Scientific/Engineering :: Bio-Informatics",
          "Topic :: Scientific/Engineering :: Medical Science Apps."]
         + ["Programming Language :: Python :: " + str(v)
-           for v in ('3.5', '3.6', '3.7', '3.8', '3.9')]),
+           for v in ('3.7', '3.8', '3.9', '3.10')]),
     keywords='repository analysis medical-imaging neuroimaging workflows pipelines')
