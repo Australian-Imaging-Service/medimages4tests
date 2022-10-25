@@ -2,12 +2,12 @@ import gzip
 import shutil
 import nibabel as nb
 import numpy as np
-from medimages4tests.nifti import sample_image
+from medimages4tests.dummy.nifti import get_image
 
 
 def test_nifti(work_dir):
 
-    nifti_fpath = sample_image(work_dir / "sample.nii")
+    nifti_fpath = get_image(work_dir / "sample.nii")
 
     nifti = nb.load(nifti_fpath)
 
@@ -16,7 +16,7 @@ def test_nifti(work_dir):
 
 def test_nifti_compressed(work_dir):
 
-    gz_fpath = sample_image(work_dir / "sample.nii.gz", compressed=True)
+    gz_fpath = get_image(work_dir / "sample.nii.gz", compressed=True)
     uncompressed_fpath = work_dir / "nifti.nii"
 
     with gzip.open(gz_fpath, 'rb') as f_in:

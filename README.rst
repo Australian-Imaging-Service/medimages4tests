@@ -30,12 +30,29 @@ or include in your package's ``test_requires``.
 Usage
 -----
 
+Create a pytest fixture consisting of a dummy image with field-map metadata in DICOM format
+
 .. code-block:: python
 
     # Import medimages4tests generator functions
-    from medimages4tests.dicom.mri.fmap.ge.discovery_mr888.dv26_0_r05_2008a import sample_image
+    from medimages4tests.dummy.dicom.mri.fmap.ge.discovery_mr888.dv26_0_r05_2008a import get_image
 
     # Return generated images in pytest fixtures (or alternative test framework)
     @pytest.fixture()
     def ge_dicom_fmap():
-        return sample_image()
+        return get_image()
+
+Create a dummy NIfTI image
+
+.. code-block:: python
+
+    import numpy
+    # Import `get_image` function
+    from medimages4tests.dummy.nifti import get_image
+
+    # Create dummy nifti image of 10x10x10 containing all ones
+    @pytest.fixture()
+    def ones_nifti():
+        return get_image(
+            data=numpy.ones((10, 10, 10))
+        )
