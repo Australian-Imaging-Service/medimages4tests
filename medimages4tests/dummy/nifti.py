@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 import gzip
 import shutil
@@ -6,13 +7,16 @@ import nibabel as nb
 
 
 def get_image(
-    out_file: Path,
+    out_file: Path = None,
     data: np.ndarray = None,
     vox_sizes=(1.0, 1.0, 1.0),
     qform=(1, 2, 3, 1),
     compressed=False,
 ) -> Path:
     """Create a random Nifti file to satisfy BIDS parsers"""
+    if out_file is None:
+        out_file = Path(tempfile.mkdtemp()) / "sample.nii"
+
     if data is None:
         data = np.random.randint(0, 1, size=[10, 10, 10])
 

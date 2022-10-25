@@ -1,9 +1,5 @@
-from tempfile import mkdtemp
-import shutil
-from pathlib import Path
-import openneuro
 from medimages4tests import base_cache_dir
-from ..neuro import OpenneuroSpec
+from medimages4tests.utils import retrieve_from_openneuro, OpenneuroSpec
 
 
 cache_dir = base_cache_dir / "mri" / "neuro" / "t1w"
@@ -18,22 +14,5 @@ SAMPLES = {
 }
 
 
-def get_image(sample_name):
-    sample = SAMPLES[sample_name]
-    if cache_dir.exists():
-        cache_dir.mkdir(parents=True)
-    out_path = (cache_dir / sample_name).with_suffix(".nii.gz")
-    if not out_path.exists():
-        tmpdir = Path(mkdtemp())
-        openneuro.download(
-            dataset=sample.dataset,
-            tag=sample.tag,
-            target_dir=tmpdir,
-            include=[sample.path],
-        )
-        for ext in (".nii.gz", ".json"):
-            shutil.copyfile(
-                (tmpdir / sample.path).with_suffix(ext)
-                (cache_dir / sample_name).with_suffix(ext)
-            )
-    return out_path
+def get_image(sample="ds004130-ON01016"):
+    return retrieve_from_openneuro(SAMPLES[sample], cache_dir / sample)
