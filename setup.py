@@ -16,7 +16,7 @@ setup(
     install_requires=[
         'pydicom>=1.0.2',
         "nibabel>=4.0.1",
-        "openeuro-py>=2022.2.0",
+        "openneuro-py>=2022.2.0",
         "attrs>=21.4.0"],
     extras_require={
         'test': [
