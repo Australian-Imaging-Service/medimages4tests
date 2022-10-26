@@ -65,5 +65,5 @@ Access real T1-weighted from OpenNeuro.org
     from medimages4tests.mri.neuro.t1w import get_image
 
     @pytest.fixture()
-    def ones_nifti():
+    def t1w_nifti():
         return get_image(sample="ds004130-ON01016")
