@@ -56,3 +56,14 @@ Create a dummy NIfTI image
         return get_image(
             data=numpy.ones((10, 10, 10))
         )
+        
+ Access real T1-weighted from OpenNeuro.org
+
+.. code-block:: python
+
+
+    from medimages4tests.mri.neuro.t1w import get_image
+
+    @pytest.fixture()
+    def ones_nifti():
+        return get_image(sample="ds004130-ON01016")
