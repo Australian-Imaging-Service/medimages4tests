@@ -57,7 +57,7 @@ Create a dummy NIfTI image
             data=numpy.ones((10, 10, 10))
         )
         
- Access real T1-weighted from OpenNeuro.org
+Access real T1-weighted from OpenNeuro.org
 
 .. code-block:: python
 
