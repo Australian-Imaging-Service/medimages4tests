@@ -1,3 +1,4 @@
+import os
 import tempfile
 from pathlib import Path
 import gzip
@@ -11,16 +12,53 @@ def get_image(
     data: np.ndarray = None,
     vox_sizes=(1.0, 1.0, 1.0),
     qform=(1, 2, 3, 1),
-    compressed=False,
+    compressed=None,
 ) -> Path:
-    """Create a random Nifti file to satisfy BIDS parsers"""
+    """Create a random Nifti file to satisfy BIDS parsers
+
+    Parameters
+    ----------
+    out_file : Path
+
+
+    """
     if out_file is None:
         out_file = Path(tempfile.mkdtemp()) / "sample.nii"
+    out_file = Path(out_file)
+
+    suffix = "".join(out_file.suffixes) if out_file.suffixes else ""
+    out_stem = out_file.parent / out_file.name[:-len(suffix)]
+    if not suffix:
+        if compressed is None:
+            raise RuntimeError(
+                f"Must either specify the suffix of the 'out_file' ('{out_file}') or the "
+                "compression type ('compressed' option)"
+            )
+        elif compressed:
+            suffix = ".nii.gz"
+        else:
+            suffix = ".nii"
+    elif compressed is None:
+        compressed = suffix == ".nii.gz"
+    elif suffix == ".nii":
+        if compressed:
+            raise RuntimeError(
+                f"Suffix '{suffix}' doesn't match the compressed being True"
+            )
+    elif suffix == ".nii.gz":
+        if not compressed:
+            raise RuntimeError(
+                f"Suffix '{suffix}' doesn't match the compressed being True"
+            )
+    else:
+        raise RuntimeError(
+            f"Unrecognised suffix for nifti file, '{suffix}'"
+        )
 
     if data is None:
         data = np.random.randint(0, 1, size=[10, 10, 10])
 
-    uncompressed = out_file.with_suffix('.nii')
+    uncompressed = out_stem.with_suffix('.nii')
 
     hdr = nb.Nifti1Header()
     hdr.set_data_shape(data.shape)
@@ -37,11 +75,12 @@ def get_image(
     )
 
     if compressed:
-        out_file = out_file.with_suffix('.nii.gz')
+        out_path = out_stem.with_suffix('.nii.gz')
         with open(uncompressed, 'rb') as f_in:
-            with gzip.open(out_file, 'wb') as f_out:
+            with gzip.open(out_path, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
+        os.unlink(uncompressed)
     else:
-        out_file = uncompressed
+        out_path = uncompressed
 
-    return out_file
+    return out_path
