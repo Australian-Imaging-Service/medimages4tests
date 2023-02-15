@@ -67,3 +67,8 @@ Access real T1-weighted from OpenNeuro.org
     @pytest.fixture()
     def t1w_nifti():
         return get_image(sample="ds004130-ON01016")
+
+
+Acknowledgements
+~~~~~~~~~~~~~~~~
+The authors acknowledge the facilities and scientific and technical assistance of the National Imaging Facility, a National Collaborative Research Infrastructure Strategy (NCRIS) capability.
