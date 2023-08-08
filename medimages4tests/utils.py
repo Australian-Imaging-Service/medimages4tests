@@ -10,7 +10,7 @@ class OpenneuroSpec:
 
     dataset: str
     tag: str
-    path: Path
+    path: Path = attrs.field(converter=Path)
 
 
 def retrieve_from_openneuro(

@@ -55,6 +55,7 @@ def generate_dicom(
         Dicom dataset
     """
 
+    cache_path = Path(cache_path)
     # Check for non-empty cache directory, and return it if present
     if cache_path.exists() and len(
         [p for p in cache_path.iterdir() if not p.name.startswith(".")]
