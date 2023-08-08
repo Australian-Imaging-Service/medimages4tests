@@ -24,8 +24,8 @@ def retrieve_from_openneuro(
         openneuro.download(
             dataset=sample.dataset,
             tag=sample.tag,
-            target_dir=tmpdir,
-            include=[sample.path],
+            target_dir=str(tmpdir),
+            include=[str(sample.path)],
         )
         for ext in suffixes:
             shutil.copyfile(
