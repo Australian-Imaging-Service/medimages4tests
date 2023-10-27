@@ -24,18 +24,19 @@ def read_dicom(fpath: Path):
     """
     dcm = pydicom.dcmread(str(fpath))
     js = dcm.to_json_dict()
-    header = {k: v for k, v in js.items()
-              if not v['vr'].startswith('O')}
+    header = {k: v for k, v in js.items() if not v["vr"].startswith("O")}
     # Replace data byte string with its length, so it can be recreated with
     # dummy data when it is loaded
-    data = {k: {'vr': v['vr'], 'BinaryLength': len(v['InlineBinary'])} 
-            for k, v in js.items()
-            if v['vr'].startswith('O')}
+    data = {
+        k: {"vr": v["vr"], "BinaryLength": len(v["InlineBinary"])}
+        for k, v in js.items()
+        if v["vr"].startswith("O")
+    }
     return header, data
 
 
 def generate_python_code(dpath: Path, image_type: str):
-    """Return 
+    """Return
 
     Parameters
     ----------
@@ -55,28 +56,30 @@ def generate_python_code(dpath: Path, image_type: str):
     collated_data = defaultdict(dict)
     num_vols = 0
     for i, fpath in enumerate(dpath.iterdir()):
-        if fpath.name.startswith('.'):
+        if fpath.name.startswith("."):
             continue
         header, data = read_dicom(fpath)
         for k, v in header.items():
             collated_hdr[k][i] = v
-        for k, v in data.items():            
+        for k, v in data.items():
             collated_data[k][i] = v
         num_vols += 1
-    constant_hdr = {k: v[0] for k, v in collated_hdr.items()
-                    if (len(v) == num_vols
-                        and all(v[0] == x for x in v.values()))}
-    varying_hdr = {k: v for k, v in collated_hdr.items()
-                   if k not in constant_hdr}
+    constant_hdr = {
+        k: v[0]
+        for k, v in collated_hdr.items()
+        if (len(v) == num_vols and all(v[0] == x for x in v.values()))
+    }
+    varying_hdr = {k: v for k, v in collated_hdr.items() if k not in constant_hdr}
 
     constant_hdr.update(ANONYMOUS_TAGS)
-    
+
     return FILE_TEMPLATE.format(
         num_vols=num_vols,
         image_type=image_type,
-        constant_hdr=json.dumps(constant_hdr, indent='    '),
+        constant_hdr=json.dumps(constant_hdr, indent="    "),
         varying_hdr=json.dumps(varying_hdr),
-        collated_data=json.dumps(collated_data))
+        collated_data=json.dumps(collated_data),
+    )
 
 
 FILE_TEMPLATE = """from medimages4tests.dummy.dicom.base import generate_dicom, default_dicom_dir
@@ -102,54 +105,33 @@ collated_data = {collated_data}
 """
 
 ANONYMOUS_TAGS = {
-    "00200010": {
-        "vr": "SH",
-        "Value": ["PROJECT_ID"]
-    },
-    "00104000": {
-        "vr": "LT",
-        "Value": ["Patient comments string"]
-    },
-    "00100020": {
-        "vr": "LO",
-        "Value": ["Session Label"]
-    },
-    "00100010": {
-        "vr": "PN",
-        "Value": [{"Alphabetic": "Session Identifier"}]
-    },
-    "00081048": {
-        "vr": "PN",
-        "Value": [{"Alphabetic": "Some Phenotype"}]
-    },
-    "00081030": {
-        "vr": "LO",
-        "Value": ["Researcher^Project"]
-    },
-    "00080081": {
-        "vr": "ST",
-        "Value": ["Address of said institute"]
-    },
-    "00080080": {
-        "vr": "LO",
-        "Value": ["An institute"]
-    }}
+    "00200010": {"vr": "SH", "Value": ["PROJECT_ID"]},
+    "00104000": {"vr": "LT", "Value": ["Patient comments string"]},
+    "00100020": {"vr": "LO", "Value": ["Session Label"]},
+    "00100010": {"vr": "PN", "Value": ["FirstName^LastName"]},
+    "00081048": {"vr": "PN", "Value": [{"Alphabetic": "Some Phenotype"}]},
+    "00081030": {"vr": "LO", "Value": ["Researcher^Project"]},
+    "00080081": {"vr": "ST", "Value": ["Address of said institute"]},
+    "00080080": {"vr": "LO", "Value": ["An institute"]},
+}
 
 
-if __name__ == '__main__':
-    parser = ArgumentParser(description=(
-        "Generates a module containing extracted metadata from a DICOM dataset"
-        "in Python dictionaries so that a dummy DICOM dataset with similar "
-        "header configuration can be generated in pytest fixtures"))
+if __name__ == "__main__":
+    parser = ArgumentParser(
+        description=(
+            "Generates a module containing extracted metadata from a DICOM dataset"
+            "in Python dictionaries so that a dummy DICOM dataset with similar "
+            "header configuration can be generated in pytest fixtures"
+        )
+    )
+    parser.add_argument("dicom_dir", help="The directory containing the source dicoms")
     parser.add_argument(
-        'dicom_dir', help="The directory containing the source dicoms")
-    parser.add_argument(
-        'fixture_file',
-        help="The file to save the extracted header information and byte data in")
+        "fixture_file",
+        help="The file to save the extracted header information and byte data in",
+    )
     args = parser.parse_args()
 
     fpath = Path(args.fixture_file)
 
-    with open(fpath, 'w') as f:
-        f.write(generate_python_code(Path(args.dicom_dir),
-                                     image_type=fpath.stem))
+    with open(fpath, "w") as f:
+        f.write(generate_python_code(Path(args.dicom_dir), image_type=fpath.stem))
