@@ -1236,7 +1236,7 @@ constant_hdr = {
         "vr": "PN",
         "Value": [
             {
-                "Alphabetic": "MND Phenotypes"
+                "Alphabetic": "Some Physician"
             }
         ]
     },
