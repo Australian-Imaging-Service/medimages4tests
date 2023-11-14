@@ -1,5 +1,7 @@
 
-from medimages4tests.dummy.dicom.base import generate_dicom, default_dicom_dir
+from medimages4tests.dummy.dicom.base import (
+   generate_dicom, default_dicom_dir, evolve_header
+)
 
 
 def get_image(out_dir=default_dicom_dir(__file__)):

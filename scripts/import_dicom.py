@@ -82,11 +82,14 @@ def generate_python_code(dpath: Path, image_type: str):
     )
 
 
-FILE_TEMPLATE = """from medimages4tests.dummy.dicom.base import generate_dicom, default_dicom_dir
+FILE_TEMPLATE = """from medimages4tests.dummy.dicom.base import (
+   generate_dicom, default_dicom_dir, evolve_header
+)
 
 
-def get_image(out_dir=default_dicom_dir(__file__)):
-    return generate_dicom(out_dir, num_vols, constant_hdr,
+def get_image(out_dir=default_dicom_dir(__file__), **kwargs):
+    hdr = evolve_header(constant_hdr, **kwargs)
+    return generate_dicom(out_dir, num_vols, hdr,
                           collated_data, varying_hdr)
 
 

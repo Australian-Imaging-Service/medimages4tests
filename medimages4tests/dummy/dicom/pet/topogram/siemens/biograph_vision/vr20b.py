@@ -1,16 +1,17 @@
 from copy import copy
-from medimages4tests.dummy.dicom.base import generate_dicom, default_dicom_dir
+from medimages4tests.dummy.dicom.base import (
+   generate_dicom, default_dicom_dir, evolve_header
+)
 
 
 def get_image(out_dir=default_dicom_dir(__file__), **kwargs):
-    hdr = copy(constant_hdr)
-    hdr.update(kwargs)
+    hdr = evolve_header(constant_hdr, **kwargs)
     return generate_dicom(out_dir, num_vols, hdr,
                           collated_data, varying_hdr)
 
 
 num_vols = 1
-0020,000D
+
 
 constant_hdr = {
     "00080005": {

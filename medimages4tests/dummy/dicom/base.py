@@ -1,7 +1,8 @@
 from pathlib import Path
 import shutil
-from copy import copy
+from copy import copy, deepcopy
 import pydicom.dataset
+import pydicom.datadict
 from ... import base_cache_dir
 
 cache_dir = base_cache_dir / "dummy" / "dicom"
@@ -88,3 +89,27 @@ def generate_dicom(
         raise
     else:
         return cache_path
+
+
+def evolve_header(dicom_header, **kwargs):
+    """Evolves a DICOM header with newly update values
+
+    Parameters
+    ----------
+    dicom_header : dict[str, any]
+        DICOM header extracted from a dataset
+    **kwargs
+        keyword arguments containing values to update in the header
+    """
+    hdr = deepcopy(dicom_header)
+    for key, val in kwargs.items():
+        tag_decimal = pydicom.datadict.tag_for_keyword(key)
+        hex_tag = format(tag_decimal, '08x').upper()
+        elem = hdr[hex_tag]["Value"]
+        assert isinstance(elem, list) and len(elem) == 1
+        nested_elem = elem[0]
+        if isinstance(nested_elem, dict) and list(nested_elem.keys()) == ["Alphabetic"]:
+            nested_elem["Alphabetic"] = val
+        else:
+            elem[0] = val
+    return hdr
