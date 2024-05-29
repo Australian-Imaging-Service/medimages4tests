@@ -70,7 +70,7 @@ def retrieve_from_github(
         cache_dir = base_cache_dir / "github"
     else:
         cache_dir = Path(cache_dir).expanduser()
-    cache_path = (cache_dir / repo / tag).joinpath(path.split("/"))
+    cache_path = (cache_dir / repo / tag).joinpath(*path.split("/"))
     if cache_path.exists():
         return cache_path
     if not cache_path.parent.exists():
