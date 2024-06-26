@@ -8,4 +8,4 @@ def test_openneuro_retrieve():
 
     nifti = nb.load(nifti_fpath)
 
-    assert nifti.shape == (204, 256, 256)
+    assert nifti.shape == (320, 194, 320)
