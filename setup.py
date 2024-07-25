@@ -7,7 +7,9 @@ setup(
     version=versioneer.get_version(),
     author="Thomas G. Close",
     author_email="tom.g.close@gmail.com",
-    packages=find_namespace_packages(),
+    packages=find_namespace_packages(
+        include=['medimages4tests*'],
+    ),
     url="https://github.com/australian-imaging-service/medimages4tests",
     license="CC0",
     description=(
