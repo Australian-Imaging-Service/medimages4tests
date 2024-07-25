@@ -7,11 +7,11 @@ cache_dir = base_cache_dir / "mri" / "neuro" / "t1w"
 
 
 SAMPLES = {
-    "ds004130-ON01016": OpenneuroSpec(
-        dataset="ds004130",
-        tag="1.0.0",
-        path="sub-ON01016/anat/sub-ON01016_acq-fspgr_run-01_T1w",
-    ),
+    # "ds004130-ON01016": OpenneuroSpec(
+    #     dataset="ds004130",
+    #     tag="1.0.0",
+    #     path="sub-ON01016/anat/sub-ON01016_acq-fspgr_run-01_T1w",
+    # ),
     "ds002014-01": OpenneuroSpec(
         dataset="ds002014",
         tag="1.0.1",
@@ -30,7 +30,7 @@ SAMPLES = {
 }
 
 
-def get_image(out_dir: Path = None, sample: str = "ds004130-ON01016"):
+def get_image(out_dir: Path = None, sample: str = "ds002014-01"):
     if out_dir is None:
         out_dir = cache_dir / sample
     return retrieve_from_openneuro(SAMPLES[sample], out_dir)
