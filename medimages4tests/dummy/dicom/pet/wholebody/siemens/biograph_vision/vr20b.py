@@ -1,5 +1,5 @@
 from medimages4tests.dummy.dicom.base import (
-   generate_dicom, default_dicom_dir, evolve_header
+    generate_dicom, default_dicom_dir, evolve_header
 )
 
 
