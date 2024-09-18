@@ -119,7 +119,7 @@ def raw_pet_to_gen_code(fspath: Path, out_dir: Path):
             num_vols=1,
             constant_hdr=json.dumps(constant_hdr, indent="    "),
             varying_hdr=json.dumps(varying_hdr),
-            collated_data=json.dumps([data]),
+            collated_data=json.dumps(data),
         )
     )
     init_fspath = out_dir / "__init__.py"
