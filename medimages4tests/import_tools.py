@@ -81,16 +81,13 @@ def dicom_series_to_gen_code(dpath: Path, image_type: str):
     )
 
 
-def raw_pet_to_gen_code(fspath: Path, image_type: str):
+def raw_pet_to_gen_code(fspath: Path, out_dir: Path):
     """Return
 
     Parameters
     ----------
     dpath : Path
         Path to the directory holding the DICOM files
-    image_type : str
-        Name of the image type, used to name the generator that derives the
-        image
 
     Returns
     -------
@@ -98,6 +95,9 @@ def raw_pet_to_gen_code(fspath: Path, image_type: str):
         Python code that generates a version of the imported image with
         dummy data.
     """
+    if not out_dir.exists():
+        out_dir.mkdir(parents=True)
+
     with open(fspath, "rb") as fp:
         dicom_size_offset = -len("LARGE_PET_LM_RAWDATA") - 4
         fp.seek(dicom_size_offset, io.SEEK_END)
@@ -113,14 +113,19 @@ def raw_pet_to_gen_code(fspath: Path, image_type: str):
     varying_hdr = {}
 
     constant_hdr.update(ANONYMOUS_TAGS)
-
-    return DICOM_FILE_TEMPLATE.format(
-        num_vols=1,
-        image_type=image_type,
-        constant_hdr=json.dumps(constant_hdr, indent="    "),
-        varying_hdr=json.dumps(varying_hdr),
-        collated_data=json.dumps([data]),
+    hdr_fspath = out_dir / "header.py"
+    hdr_fspath.write_text(
+        RAW_PET_FILE_HDR_TEMPLATE.format(
+            num_vols=1,
+            constant_hdr=json.dumps(constant_hdr, indent="    "),
+            varying_hdr=json.dumps(varying_hdr),
+            collated_data=json.dumps([data]),
+        )
     )
+    init_fspath = out_dir / "__init__.py"
+    init_fspath.write_text(RAW_PET_FILE_INIT_TEMPLATE)
+    init_fspath = out_dir / "data.py"
+    init_fspath.write_text(RAW_PET_FILE_DATA_TEMPLATE)
 
 
 DICOM_FILE_TEMPLATE = """from medimages4tests.dummy.dicom.base import (
@@ -149,7 +154,7 @@ collated_data = {collated_data}
 """
 
 
-RAW_PET_FILE_TEMPLATE = """from medimages4tests.dummy.dicom.base import (
+RAW_PET_FILE_HDR_TEMPLATE = """from medimages4tests.dummy.dicom.base import (
     generate_dicom, default_dicom_dir, evolve_header
 )
 
@@ -167,6 +172,31 @@ constant_hdr = {constant_hdr}
 
 
 collated_data = {collated_data}
+
+
+"""
+
+
+RAW_PET_FILE_INIT_TEMPLATE = """from .data import get_data
+
+__all__ = ["get_data"]
+"""
+
+
+RAW_PET_FILE_DATA_TEMPLATE = """import typing as ty
+from pathlib import Path
+import tempfile
+from .header import get_image_header
+from ..base import generate_raw_data
+
+
+def get_data(out_dir: Path = None, **kwargs) -> ty.List[Path]:
+    tmp_dir = Path(tempfile.mkdtemp())
+    dicom_hdr_fspath = next(get_image_header(tmp_dir, **kwargs).iterdir())
+    return generate_raw_data(
+        dicom_hdr_fspath=dicom_hdr_fspath,
+        out_dir=out_dir,
+    )
 
 
 """

@@ -32,5 +32,5 @@ def test_siemens_raw_pet_data_creation(siemens_raw_pet_data: ModuleType):
 
     out_dir = Path(tempfile.mkdtemp())
 
-    # Generate DICOM files
+    # Generate raw PET data files
     siemens_raw_pet_data.get_image(out_dir)

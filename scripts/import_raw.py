@@ -16,12 +16,9 @@ if __name__ == "__main__":
         "raw_pet_file", help="The directory containing the source dicoms"
     )
     parser.add_argument(
-        "fixture_file",
+        "output_dir",
         help="The file to save the extracted header information and byte data in",
     )
     args = parser.parse_args()
 
-    fpath = Path(args.fixture_file)
-
-    with open(fpath, "w") as f:
-        f.write(raw_pet_to_gen_code(Path(args.raw_pet_file), image_type=fpath.stem))
+    raw_pet_to_gen_code(Path(args.raw_pet_file), Path(args.output_dir))
