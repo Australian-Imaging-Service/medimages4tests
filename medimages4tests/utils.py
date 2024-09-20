@@ -7,7 +7,7 @@ import typing as ty
 from pathlib import Path
 import openneuro
 import attrs
-from . import base_cache_dir
+from medimages4tests.cache_dir import base_cache_dir
 
 
 @attrs.define

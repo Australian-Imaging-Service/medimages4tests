@@ -19,6 +19,7 @@ def generate_raw_data(
     scan_id: int = 602,
     acquisition_id: str = "PET_U_FDG_SWB_LM_(Adult)",
     date_time: datetime = DEFAULT_SCAN_DATE,
+    **kwargs: ty.Any,
 ) -> ty.List[Path]:
     dcm_hdr_bytes = dicom_hdr_fspath.read_bytes()
     dcm = pydicom.dcmread(dicom_hdr_fspath)
@@ -30,8 +31,8 @@ def generate_raw_data(
     # 4 bytes for the int that holds the length of the header
     header_size = len(dcm_hdr_bytes)
     fname = FILENAME_TEMPLATE.format(
-        last_name=dcm.PatientName.family_name,
-        first_name=dcm.PatientName.given_name,
+        last_name=dcm.PatientName.family_name.replace(" ", "_"),
+        first_name=dcm.PatientName.given_name.replace(" ", "_"),
         scan_id=scan_id,
         acquisition_id=acquisition_id,
         date_time=date_time.strftime("%Y.%m.%d.%H.%M.%S.%f"),

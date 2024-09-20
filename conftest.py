@@ -8,7 +8,7 @@ base_dicom_dir = Path(__file__).parent / "medimages4tests" / "dummy" / "dicom"
 dicom_modules = [
     "__".join(p.relative_to(base_dicom_dir).with_suffix("").parts)
     for p in base_dicom_dir.glob("**/*.py")
-    if p.stem != "base"
+    if p.stem not in ("base", "__init__")
 ]
 
 

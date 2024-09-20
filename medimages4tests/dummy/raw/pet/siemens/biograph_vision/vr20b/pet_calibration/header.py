@@ -1,12 +1,11 @@
 from medimages4tests.dummy.dicom.base import (
     generate_dicom,
-    default_dicom_dir,
     evolve_header,
 )
 
 
 def get_image_header(out_dir, **kwargs):
-    hdr = evolve_header(constant_hdr, **kwargs)
+    hdr = evolve_header(constant_hdr, skip_unknown=True, **kwargs)
     return generate_dicom(out_dir, num_vols, hdr, collated_data, {})
 
 

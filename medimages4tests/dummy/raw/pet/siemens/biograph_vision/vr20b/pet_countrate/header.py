@@ -6,7 +6,7 @@ from medimages4tests.dummy.dicom.base import (
 
 def get_image_header(out_dir, **kwargs):
     hdr = evolve_header(constant_hdr, skip_unknown=True, **kwargs)
-    return generate_dicom(out_dir, num_vols, hdr, collated_data, varying_hdr)
+    return generate_dicom(out_dir, num_vols, hdr, collated_data, {})
 
 
 num_vols = 1
@@ -14,20 +14,20 @@ num_vols = 1
 
 constant_hdr = {
     "00080005": {"vr": "CS", "Value": ["ISO_IR 100"]},
-    "00080008": {"vr": "CS", "Value": ["ORIGINAL", "PRIMARY", "PET_LISTMODE"]},
+    "00080008": {"vr": "CS", "Value": ["ORIGINAL", "PRIMARY", "PET_COUNTRATE"]},
     "00080012": {"vr": "DA", "Value": ["20230725"]},
-    "00080013": {"vr": "TM", "Value": ["115445.329000"]},
+    "00080013": {"vr": "TM", "Value": ["120446.177000"]},
     "00080016": {"vr": "UI", "Value": ["1.3.12.2.1107.5.9.1"]},
     "00080018": {
         "vr": "UI",
-        "Value": ["1.3.12.2.1107.5.1.4.10016.30000023072501543220300000003"],
+        "Value": ["1.3.12.2.1107.5.1.4.10016.30000023072501543220300000004"],
     },
     "00080020": {"vr": "DA", "Value": ["20230725"]},
     "00080021": {"vr": "DA", "Value": ["20230725"]},
     "00080022": {"vr": "DA", "Value": ["20230725"]},
     "00080030": {"vr": "TM", "Value": ["114938.720000"]},
     "00080031": {"vr": "TM", "Value": ["115432.206000"]},
-    "00080032": {"vr": "TM", "Value": ["115445.329000"]},
+    "00080032": {"vr": "TM", "Value": ["120446.177000"]},
     "00080050": {"vr": "SH"},
     "00080060": {"vr": "CS", "Value": ["PT"]},
     "00080070": {"vr": "LO", "Value": ["SIEMENS"]},
@@ -39,7 +39,7 @@ constant_hdr = {
     "0008103E": {"vr": "LO", "Value": ["PET Raw Data"]},
     "00081040": {"vr": "LO", "Value": ["PET"]},
     "00081090": {"vr": "LO", "Value": ["Biograph128_Vision Quadra Edge-1232"]},
-    "00082111": {"vr": "ST", "Value": ["PETCT-PET"]},
+    "00082111": {"vr": "ST", "Value": ["PETCT"]},
     "00100010": {"vr": "PN", "Value": ["FirstName^LastName"]},
     "00100020": {"vr": "LO", "Value": ["Session Label"]},
     "00100030": {"vr": "DA", "Value": ["19700101"]},
@@ -62,32 +62,25 @@ constant_hdr = {
     },
     "00200010": {"vr": "SH", "Value": ["PROJECT_ID"]},
     "00200011": {"vr": "IS", "Value": [602]},
-    "00200012": {"vr": "IS", "Value": [2001]},
-    "00200013": {"vr": "IS", "Value": [2001]},
+    "00200012": {"vr": "IS", "Value": [2000]},
+    "00200013": {"vr": "IS", "Value": [2000]},
     "00200052": {
         "vr": "UI",
         "Value": ["1.3.12.2.1107.5.1.4.10016.30000023072501494590400000000"],
     },
-    "00204000": {"vr": "LT", "Value": ["PET Scan 2 Bed 1 Listmode"]},
+    "00204000": {"vr": "LT", "Value": ["PET Scan 2 Count Rate"]},
     "00290010": {"vr": "LO", "Value": ["SIEMENS CSA NON-IMAGE"]},
-    "00290011": {"vr": "LO", "Value": ["SIEMENS CSA HEADER"]},
-    "00290012": {"vr": "LO", "Value": ["SIEMENS MEDCOM HEADER"]},
-    "00291008": {"vr": "CS", "Value": ["PET_LISTMODE_T"]},
-    "00291009": {"vr": "LO", "Value": ["1.3"]},
-    "00291108": {"vr": "CS", "Value": ["PET_HDR_LISTMODE"]},
-    "00291109": {"vr": "LO", "Value": ["1.3"]},
+    "00290011": {"vr": "LO", "Value": ["SIEMENS MEDCOM HEADER"]},
+    "00291008": {"vr": "CS", "Value": ["PET_COUNTRATE_T"]},
+    "00291009": {"vr": "LO", "Value": ["1.0"]},
     "7FE10010": {"vr": "LO", "Value": ["SIEMENS CSA NON-IMAGE"]},
     "00104000": {"vr": "LT", "Value": ["Patient comments string"]},
     "00081048": {"vr": "PN", "Value": [{"Alphabetic": "Some Phenotype"}]},
 }
 
 
-varying_hdr = {}
-
-
 collated_data = {
-    "00291010": {"vr": "OB", "BinaryLength": 3152},
-    "00291110": {"vr": "OB", "BinaryLength": 3300},
-    "00291220": {"vr": "OB", "BinaryLength": 104},
+    "00291010": {"vr": "OB", "BinaryLength": 16},
+    "00291120": {"vr": "OB", "BinaryLength": 104},
     "7FE11010": {"vr": "OB", "BinaryLength": 352},
 }

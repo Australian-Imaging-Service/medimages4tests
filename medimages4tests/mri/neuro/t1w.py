@@ -1,5 +1,5 @@
 from pathlib import Path
-from medimages4tests import base_cache_dir
+from medimages4tests.cache_dir import base_cache_dir
 from medimages4tests.utils import retrieve_from_openneuro, OpenneuroSpec
 
 
