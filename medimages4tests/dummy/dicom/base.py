@@ -1,9 +1,10 @@
 from pathlib import Path
 import shutil
+import typing as ty
 from copy import copy, deepcopy
 import pydicom.dataset
 import pydicom.datadict
-from ... import base_cache_dir
+from medimages4tests.cache_dir import base_cache_dir
 
 cache_dir = base_cache_dir / "dummy" / "dicom"
 dicom_pkg_dir = Path(__file__).parent
@@ -22,10 +23,7 @@ def default_dicom_dir(file_loc: str):
     Path
         Relative path to module
     """
-    return (
-        cache_dir
-        / Path(file_loc).relative_to(dicom_pkg_dir)
-    ).with_suffix("")
+    return (cache_dir / Path(file_loc).relative_to(dicom_pkg_dir)).with_suffix("")
 
 
 def generate_dicom(
@@ -91,7 +89,13 @@ def generate_dicom(
         return cache_path
 
 
-def evolve_header(dicom_header, **kwargs):
+def evolve_header(
+    dicom_header: ty.Dict[str, ty.Any],
+    first_name: str = None,
+    last_name: str = None,
+    skip_unknown: bool = False,
+    **kwargs,
+) -> ty.Dict[str, ty.Any]:
     """Evolves a DICOM header with newly update values
 
     Parameters
@@ -102,9 +106,27 @@ def evolve_header(dicom_header, **kwargs):
         keyword arguments containing values to update in the header
     """
     hdr = deepcopy(dicom_header)
+    if first_name or last_name:
+        if not first_name or not last_name:
+            try:
+                patient_names = hdr["00100010"]["Value"][0].split("^")
+            except AttributeError:
+                raise ValueError(
+                    "Must provide both first and last patient names as could "
+                    "not read existing ones from the header"
+                )
+            if first_name is None:
+                first_name = patient_names[0]
+            else:
+                last_name = patient_names[-1]
+        kwargs["PatientName"] = last_name + "^" + first_name
     for key, val in kwargs.items():
         tag_decimal = pydicom.datadict.tag_for_keyword(key)
-        hex_tag = format(tag_decimal, '08x').upper()
+        if not tag_decimal:
+            if skip_unknown:
+                continue
+            raise ValueError(f"Did not find tag corresponding to keyword {key}")
+        hex_tag = format(tag_decimal, "08x").upper()
         elem = hdr[hex_tag]["Value"]
         assert isinstance(elem, list) and len(elem) == 1
         nested_elem = elem[0]

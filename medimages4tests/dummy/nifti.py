@@ -1,5 +1,6 @@
 import os
 import tempfile
+import typing as ty
 from pathlib import Path
 import gzip
 import shutil
@@ -12,7 +13,7 @@ def get_image(
     data: np.ndarray = None,
     vox_sizes=(1.0, 1.0, 1.0),
     qform=(1, 2, 3, 1),
-    compressed=None,
+    compressed: ty.Optional[bool] = None,
 ) -> Path:
     """Create a random Nifti file to satisfy BIDS parsers
 
@@ -27,7 +28,7 @@ def get_image(
     out_file = Path(out_file)
 
     suffix = "".join(out_file.suffixes) if out_file.suffixes else ""
-    out_stem = out_file.parent / out_file.name[:-len(suffix)]
+    out_stem = out_file.parent / out_file.name[: -len(suffix)]
     if not suffix:
         if compressed is None:
             raise RuntimeError(
@@ -51,14 +52,12 @@ def get_image(
                 f"Suffix '{suffix}' doesn't match the compressed being True"
             )
     else:
-        raise RuntimeError(
-            f"Unrecognised suffix for nifti file, '{suffix}'"
-        )
+        raise RuntimeError(f"Unrecognised suffix for nifti file, '{suffix}'")
 
     if data is None:
         data = np.random.randint(0, 1, size=[10, 10, 10])
 
-    uncompressed = out_stem.with_suffix('.nii')
+    uncompressed = out_stem.with_suffix(".nii")
 
     hdr = nb.Nifti1Header()
     hdr.set_data_shape(data.shape)
@@ -75,9 +74,9 @@ def get_image(
     )
 
     if compressed:
-        out_path = out_stem.with_suffix('.nii.gz')
-        with open(uncompressed, 'rb') as f_in:
-            with gzip.open(out_path, 'wb') as f_out:
+        out_path = out_stem.with_suffix(".nii.gz")
+        with open(uncompressed, "rb") as f_in:
+            with gzip.open(out_path, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)
         os.unlink(uncompressed)
     else:
