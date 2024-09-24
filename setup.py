@@ -8,7 +8,7 @@ setup(
     author="Thomas G. Close",
     author_email="tom.g.close@gmail.com",
     packages=find_namespace_packages(
-        include=['medimages4tests*'],
+        include=["medimages4tests*"],
     ),
     url="https://github.com/australian-imaging-service/medimages4tests",
     license="CC0",
@@ -18,7 +18,7 @@ setup(
     ),
     long_description=open("README.rst").read(),
     install_requires=[
-        "pydicom>=1.0.2",
+        "pydicom>=3.0.1",
         "nibabel>=4.0.1",
         "openneuro-py>=2022.2.0",
         "attrs>=21.4.0",
