@@ -81,7 +81,7 @@ def generate_dicom(
             ds.is_implicit_VR = True
             ds.is_little_endian = True
 
-            ds.save_as(cache_path / f"{i}.dcm", write_like_original=False)
+            ds.save_as(cache_path / f"{i}.dcm", enforce_file_format=True)
     except Exception:
         shutil.rmtree(cache_path)  # Remove directory from cache on error
         raise
