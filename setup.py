@@ -18,7 +18,7 @@ setup(
     ),
     long_description=open("README.rst").read(),
     install_requires=[
-        "pydicom>=3.0.1",
+        "pydicom>=2.4.4",
         "nibabel>=4.0.1",
         "openneuro-py>=2022.2.0",
         "attrs>=21.4.0",

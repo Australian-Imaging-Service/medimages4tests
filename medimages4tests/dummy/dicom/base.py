@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+import sys
 import typing as ty
 from copy import copy, deepcopy
 import pydicom.dataset
@@ -80,8 +81,11 @@ def generate_dicom(
             ds = pydicom.dataset.Dataset.from_json(vol_json)
             ds.is_implicit_VR = True
             ds.is_little_endian = True
-
-            ds.save_as(cache_path / f"{i}.dcm", enforce_file_format=True)
+            if sys.version_info < (3, 10):
+                save_kwargs = {"write_like_original": False}
+            else:
+                save_kwargs = {"enforce_file_format": True}
+            ds.save_as(cache_path / f"{i}.dcm", **save_kwargs)
     except Exception:
         shutil.rmtree(cache_path)  # Remove directory from cache on error
         raise
