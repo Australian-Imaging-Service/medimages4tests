@@ -81,7 +81,7 @@ def generate_dicom(
             ds = pydicom.dataset.Dataset.from_json(vol_json)
             ds.is_implicit_VR = True
             ds.is_little_endian = True
-            if sys.version_info < (3, 10):
+            if sys.version_info < (3, 10) or pydicom.__version__.split(".")[0] < "3":
                 save_kwargs = {"write_like_original": False}
             else:
                 save_kwargs = {"enforce_file_format": True}
