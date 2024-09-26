@@ -1,6 +1,5 @@
 from pathlib import Path
 import shutil
-import sys
 import typing as ty
 from copy import copy, deepcopy
 import pydicom.dataset
@@ -81,7 +80,7 @@ def generate_dicom(
             ds = pydicom.dataset.Dataset.from_json(vol_json)
             ds.is_implicit_VR = True
             ds.is_little_endian = True
-            if sys.version_info < (3, 10) or pydicom.__version__.split(".")[0] < "3":
+            if pydicom.__version__.split(".")[0] < "3":
                 save_kwargs = {"write_like_original": False}
             else:
                 save_kwargs = {"enforce_file_format": True}
@@ -110,6 +109,7 @@ def evolve_header(
         keyword arguments containing values to update in the header
     """
     hdr = deepcopy(dicom_header)
+    [getattr(hdr, a) for a in dir(hdr)]  # Ensure data dict keys are loaded
     if first_name or last_name:
         if not first_name or not last_name:
             try:
@@ -131,7 +131,11 @@ def evolve_header(
                 continue
             raise ValueError(f"Did not find tag corresponding to keyword {key}")
         hex_tag = format(tag_decimal, "08x").upper()
-        elem = hdr[hex_tag]["Value"]
+        tag = hdr[hex_tag]
+        try:
+            elem = tag["Value"]
+        except KeyError:
+            continue
         assert isinstance(elem, list) and len(elem) == 1
         nested_elem = elem[0]
         if isinstance(nested_elem, dict) and list(nested_elem.keys()) == ["Alphabetic"]:
