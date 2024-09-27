@@ -4,6 +4,7 @@ import typing as ty
 from copy import copy, deepcopy
 import pydicom.dataset
 import pydicom.datadict
+from medimages4tests.utils import invalid_path_chars_re
 from medimages4tests.cache_dir import base_cache_dir
 
 cache_dir = base_cache_dir / "dummy" / "dicom"
@@ -27,11 +28,12 @@ def default_dicom_dir(file_loc: str):
 
 
 def generate_dicom(
-    cache_path: Path,
+    cache_dir: Path,
     num_vols: int,
     constant_hdr: dict,
     collated_data: dict,
     varying_hdr: dict,
+    header_vals: dict[str, ty.Any],
 ):
     """Generates a dummy DICOM dataset for a test fixture
 
@@ -54,7 +56,13 @@ def generate_dicom(
         Dicom dataset
     """
 
-    cache_path = Path(cache_path)
+    cache_dir = Path(cache_dir)
+    if header_vals:
+        header_str = "__".join(f"{k}_{v}" for k, v in sorted(header_vals.items()))
+        header_str = invalid_path_chars_re.sub("_", header_str)
+    else:
+        header_str = "_"
+    cache_path = cache_dir / header_str
     # Check for non-empty cache directory, and return it if present
     if cache_path.exists() and len(
         [p for p in cache_path.iterdir() if not p.name.startswith(".")]
