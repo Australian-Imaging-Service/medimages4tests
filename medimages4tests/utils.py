@@ -2,6 +2,7 @@ from tempfile import mkdtemp
 import requests
 import tarfile
 import shutil
+import re
 import os
 import typing as ty
 from pathlib import Path
@@ -100,3 +101,6 @@ def retrieve_from_github(
             )
         os.rename(dir_contents[0], cache_path)
     return cache_path
+
+
+invalid_path_chars_re = re.compile(r'[<>:"/\\|?*\x00-\x1F]')
