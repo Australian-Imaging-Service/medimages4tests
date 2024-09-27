@@ -33,7 +33,7 @@ def generate_dicom(
     constant_hdr: dict,
     collated_data: dict,
     varying_hdr: dict,
-    header_vals: dict[str, ty.Any],
+    header_vals: ty.Dict[str, ty.Any],
 ):
     """Generates a dummy DICOM dataset for a test fixture
 
