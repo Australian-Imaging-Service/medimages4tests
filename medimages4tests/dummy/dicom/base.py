@@ -11,7 +11,7 @@ cache_dir = base_cache_dir / "dummy" / "dicom"
 dicom_pkg_dir = Path(__file__).parent
 
 
-def default_dicom_dir(file_loc: str):
+def default_dicom_dir(file_loc: str, header_vals: ty.Dict[str, ty.Any]):
     """Gets relative path location of module from base DICOM directory
 
     Parameters
@@ -24,7 +24,12 @@ def default_dicom_dir(file_loc: str):
     Path
         Relative path to module
     """
-    return (cache_dir / Path(file_loc).relative_to(dicom_pkg_dir)).with_suffix("")
+    if header_vals:
+        header_str = "__".join(f"{k}_{v}" for k, v in sorted(header_vals.items()))
+        header_str = invalid_path_chars_re.sub("_", header_str)
+    else:
+        header_str = "_"
+    return (cache_dir / Path(file_loc).with_suffix("").relative_to(dicom_pkg_dir) / header_str)
 
 
 def generate_dicom(
@@ -33,7 +38,6 @@ def generate_dicom(
     constant_hdr: dict,
     collated_data: dict,
     varying_hdr: dict,
-    header_vals: ty.Dict[str, ty.Any],
 ):
     """Generates a dummy DICOM dataset for a test fixture
 
@@ -57,19 +61,13 @@ def generate_dicom(
     """
 
     cache_dir = Path(cache_dir)
-    if header_vals:
-        header_str = "__".join(f"{k}_{v}" for k, v in sorted(header_vals.items()))
-        header_str = invalid_path_chars_re.sub("_", header_str)
-    else:
-        header_str = "_"
-    cache_path = cache_dir / header_str
     # Check for non-empty cache directory, and return it if present
-    if cache_path.exists() and len(
-        [p for p in cache_path.iterdir() if not p.name.startswith(".")]
+    if cache_dir.exists() and len(
+        [p for p in cache_dir.iterdir() if not p.name.startswith(".")]
     ):
-        return cache_path
+        return cache_dir
 
-    cache_path.mkdir(parents=True, exist_ok=True)
+    cache_dir.mkdir(parents=True, exist_ok=True)
 
     try:
         for i in range(num_vols):
@@ -92,12 +90,12 @@ def generate_dicom(
                 save_kwargs = {"write_like_original": False}
             else:
                 save_kwargs = {"enforce_file_format": True}
-            ds.save_as(cache_path / f"{i}.dcm", **save_kwargs)
+            ds.save_as(cache_dir / f"{i}.dcm", **save_kwargs)
     except Exception:
-        shutil.rmtree(cache_path)  # Remove directory from cache on error
+        shutil.rmtree(cache_dir)  # Remove directory from cache on error
         raise
     else:
-        return cache_path
+        return cache_dir
 
 
 def evolve_header(
