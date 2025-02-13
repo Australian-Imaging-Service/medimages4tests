@@ -6,6 +6,7 @@ import gzip
 import shutil
 import numpy as np
 import nibabel as nb
+import time  # Import time module
 
 
 def get_image(
@@ -14,6 +15,7 @@ def get_image(
     vox_sizes=(1.0, 1.0, 1.0),
     qform=(1, 2, 3, 1),
     compressed: ty.Optional[bool] = None,
+    seed: int = None,  # Add seed parameter
 ) -> Path:
     """Create a random Nifti file to satisfy BIDS parsers
 
@@ -54,8 +56,12 @@ def get_image(
     else:
         raise RuntimeError(f"Unrecognised suffix for nifti file, '{suffix}'")
 
+    if seed is None:
+        seed = int(time.time())  # Use current timestamp as seed if no seed is provided
+    np.random.seed(seed)  # Set the seed for reproducibility
+
     if data is None:
-        data = np.random.randint(0, 1, size=[10, 10, 10])
+        data = np.random.randint(0, 65535, size=[10, 10, 10])
 
     uncompressed = out_stem.with_suffix(".nii")
 
