@@ -40,7 +40,7 @@ setup(
         ]
         + [
             "Programming Language :: Python :: " + str(v)
-            for v in ("3.8", "3.9", "3.10", "3.11")
+            for v in ("3.8", "3.9", "3.10", "3.11", "3.12", "3.13")
         ]
     ),
     keywords="repository analysis medical-imaging neuroimaging workflows pipelines",
