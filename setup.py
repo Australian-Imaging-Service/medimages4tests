@@ -11,7 +11,7 @@ setup(
         include=["medimages4tests*"],
     ),
     url="https://github.com/australian-imaging-service/medimages4tests",
-    license="CC0",
+    license="Apache License 2.0",
     description=(
         "Generates dummy medical image data with realistic headers "
         "to be used in image handling tests"
