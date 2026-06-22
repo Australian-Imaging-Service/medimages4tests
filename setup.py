@@ -21,6 +21,7 @@ setup(
         "pydicom>=2.4.4",
         "nibabel>=4.0.1",
         "openneuro-py>=2022.2.0",
+        "requests>=2.30.0",
         "attrs>=21.4.0",
     ],
     extras_require={
