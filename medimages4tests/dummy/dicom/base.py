@@ -29,7 +29,11 @@ def default_dicom_dir(file_loc: str, header_vals: ty.Dict[str, ty.Any]):
         header_str = invalid_path_chars_re.sub("_", header_str)
     else:
         header_str = "_"
-    return (cache_dir / Path(file_loc).with_suffix("").relative_to(dicom_pkg_dir) / header_str)
+    return (
+        cache_dir
+        / Path(file_loc).with_suffix("").relative_to(dicom_pkg_dir)
+        / header_str
+    )
 
 
 def generate_dicom(
@@ -141,11 +145,14 @@ def evolve_header(
         try:
             elem = tag["Value"]
         except KeyError:
-            continue
-        assert isinstance(elem, list) and len(elem) == 1
-        nested_elem = elem[0]
-        if isinstance(nested_elem, dict) and list(nested_elem.keys()) == ["Alphabetic"]:
-            nested_elem["Alphabetic"] = val
+            tag["Value"] = [val]
         else:
-            elem[0] = val
+            assert isinstance(elem, list) and len(elem) == 1
+            nested_elem = elem[0]
+            if isinstance(nested_elem, dict) and list(nested_elem.keys()) == [
+                "Alphabetic"
+            ]:
+                nested_elem["Alphabetic"] = val
+            else:
+                elem[0] = val
     return hdr
