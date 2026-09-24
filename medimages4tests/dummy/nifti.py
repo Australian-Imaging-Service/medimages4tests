@@ -16,6 +16,7 @@ def get_image(
     qform=(1, 2, 3, 1),
     compressed: ty.Optional[bool] = None,
     seed: int = None,  # Add seed parameter
+    nifti_version_2: bool = False,
 ) -> Path:
     """Create a random Nifti file to satisfy BIDS parsers
 
@@ -26,7 +27,8 @@ def get_image(
 
     """
     if out_file is None:
-        out_file = Path(tempfile.mkdtemp()) / "sample.nii"
+        out_file = Path(tempfile.mkdtemp()) / "sample.nii" if not compressed else "sample.nii.gz"
+
     out_file = Path(out_file)
 
     suffix = "".join(out_file.suffixes) if out_file.suffixes else ""
@@ -65,13 +67,19 @@ def get_image(
 
     uncompressed = out_stem.with_suffix(".nii")
 
-    hdr = nb.Nifti1Header()
+    if nifti_version_2:
+        hdr = nb.Nifti2Header()
+        image_type = nb.Nifti2Image
+    else:
+        hdr = nb.Nifti1Header()
+        image_type = nb.Nifti1Image
+
     hdr.set_data_shape(data.shape)
     hdr.set_zooms(vox_sizes)  # set voxel size
     hdr.set_xyzt_units(2)  # millimeters
     hdr.set_qform(np.diag(qform))
     nb.save(
-        nb.Nifti1Image(
+        image_type(
             data,
             hdr.get_best_affine(),
             header=hdr,
