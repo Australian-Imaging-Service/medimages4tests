@@ -6,7 +6,6 @@ import re
 import os
 import typing as ty
 from pathlib import Path
-import openneuro
 import attrs
 from medimages4tests.cache_dir import base_cache_dir
 
@@ -22,6 +21,10 @@ def retrieve_from_openneuro(
     sample, cache_path, suffixes=(".nii.gz", ".json"), force_download=False
 ):
     """Retrieves an image from the OpenNeuro repository"""
+    # Imported lazily as openneuro creates a config dir on import, which fails in
+    # environments without a writable home directory
+    import openneuro
+
     if not cache_path.parent.exists():
         cache_path.parent.mkdir(parents=True)
     out_path = cache_path.with_suffix(suffixes[0])
